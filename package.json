@@ -6,10 +6,11 @@
 	},
 	"dependencies": {
 		"bcrypt": "^5.1.1",
-		"dotenv": "^16.4.5",
+		"dotenv": "^16.6.1",
 		"ejs": "^3.1.9",
-		"express": "^4.18.3",
-		"mysql2": "^3.9.2"
+		"express": "^4.22.1",
+		"mysql2": "^3.9.2",
+		"sequelize": "^6.37.8"
 	},
 	"author": "Patrick",
 	"license": "ISC"

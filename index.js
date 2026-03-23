@@ -1,15 +1,17 @@
-//Define the include function for absolute file name
+const express = require('express');
 global.base_dir = __dirname;
+
 global.abs_path = function(path) {
 	return base_dir + path;
-}
+};
+
 global.include = function(file) {
 	return require(abs_path('/' + file));
-}
-
-const express = require('express');
+};
 const database = include('databaseConnection');
 const router = include('routes/router');
+const petModel = include('models/pet');
+const petTypeModel = include('models/pet_type');
 
 const port = process.env.PORT || 3000;
 
@@ -17,7 +19,7 @@ async function printMySQLVersion() {
 	let sqlQuery = `
 		SHOW VARIABLES LIKE 'version';
 	`;
-	
+
 	try {
 		const results = await database.query(sqlQuery);
 		console.log("Successfully connected to MySQL");
@@ -31,19 +33,29 @@ async function printMySQLVersion() {
 	}
 }
 
-const success = printMySQLVersion();
-
 
 const app = express();
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended: false}));
- 
-app.use('/',router);
+
+app.use('/', router);
 app.use(express.static(__dirname + "/public"));
 
-app.listen(port, () => {
-	console.log("Node application listening on port "+port);
-}); 
+async function startApp() {
+    const success = await printMySQLVersion();
 
+    if (!success) {
+        console.log("Server not started because MySQL connection failed.");
+        return;
+    }
 
+    try {
+        app.listen(port, () => {
+            console.log("Node application listening on port " + port);
+        });
+    } catch (err) {
+        console.error("DB init failed:", err);
+    }
+}
 
+startApp();
